@@ -2,21 +2,35 @@ package com.example.quins;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
+import com.example.quins.Common.Common;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.security.Permission;
+
 public class MainActivity extends AppCompatActivity {
     FirebaseUser mauth;
     FloatingActionButton floatingActionButton;
+    RelativeLayout relativeLayout;
+    ProgressBar progressBar;
+    Button btn;
+    RecyclerView recyclerView;
+    String[] permission = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,40 +38,47 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mauth = FirebaseAuth.getInstance().getCurrentUser();
         floatingActionButton = findViewById(R.id.dloatingbutton);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        relativeLayout = findViewById(R.id.visible);
+        progressBar = findViewById(R.id.progress_bar);
+        btn = findViewById(R.id.btn);
+        recyclerView = findViewById(R.id.recycler);
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-
-               AlertDialog.Builder additem=new AlertDialog.Builder(getApplicationContext(),R.style.Theme_AppCompat);
-                LayoutInflater inflater = getLayoutInflater();
-                View view = inflater.inflate(R.layout.getdata, null);
-
-                additem.setView(view);
-
-
-                additem.setTitle("Status ");
-                additem.setMessage("Add Photo");
-                additem.show();
-                additem.setPositiveButton("Upload", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-dialog.dismiss();
-                    }
-                });
-                additem.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.dismiss();
-                    }
-                });
-
+            public void run() {
+                progressBar.setVisibility(View.VISIBLE);
 
             }
-        });
+        }, 2000);
+
+
+        looip();
 
 
     }
+
+    private void looip() {
+        if (Common.isConnectionAvailabele(getApplicationContext())) {
+            relativeLayout.setVisibility(View.VISIBLE);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    looip();
+                }
+            });
+
+        } else {
+            relativeLayout.setVisibility(View.GONE);
+            loop2();
+
+        }
+    }
+
+    private void loop2() {
+        recyclerView.setVisibility(View.VISIBLE);
+
+
+    }
+
 
     @Override
     protected void onStart() {
