@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 
 public class Common {
 
+    public static String chilpoststatus="Quin";
+
     public static boolean isConnectionAvailabele(Context context){
         ConnectivityManager connectivityManager=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager!=null){
