@@ -21,34 +21,40 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 7117;
+    FirebaseUser user;
     List<AuthUI.IdpConfig> providers;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-       providers= Arrays.asList( new AuthUI.IdpConfig.EmailBuilder().build());
-showsigninOptions();
+        providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
+        showsigninOptions();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+if (user!=null){
+    Intent intent = new Intent(this
+            , MainActivity.class);
+    Toast.makeText(this, "" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+    startActivity(intent);
+}
 
     }
 
     private void showsigninOptions() {
         startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
-        .setAvailableProviders(providers)
-        .setTheme(R.style.Theme_Quins)
-        .build(),MY_REQUEST_CODE);
+                .setAvailableProviders(providers)
+                .setTheme(R.style.Theme_Quins)
+                .setIsSmartLockEnabled(false)
+                .build(), MY_REQUEST_CODE);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==MY_REQUEST_CODE){
-            if (requestCode==RESULT_OK){
-                FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
-                Intent intent=new Intent(this
-                ,MainActivity.class);
-                Toast.makeText(this, ""+user.getDisplayName(), Toast.LENGTH_SHORT).show();
-            startActivity(intent);
+        if (requestCode == MY_REQUEST_CODE) {
+            if (requestCode == RESULT_OK) {
+                Toast.makeText(this, "Login Sucesfull", Toast.LENGTH_SHORT).show();
             }
         }
 
