@@ -32,19 +32,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public Context context;
     public List<QuinsData> quinsData;
     public List<QuinsData> quinsDataList;
-
     public DatabaseReference reference;
+    int size=0;
+
+    public RecyclerAdapter() {
+    }
 
     public RecyclerAdapter(Context context, List<QuinsData> quinsData) {
         this.context = context;
         this.quinsData = quinsData;
+
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.recyclerstatus, parent, false);
-        quinsDataList=new ArrayList<>();
+        quinsDataList = new ArrayList<>();
         return new ViewHolder(view);
     }
 
@@ -60,35 +64,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             Glide.with(context).load(R.drawable.pp).into(holder.circleImageView);
 
         }
-        reference= FirebaseDatabase.getInstance().getReference("Quin").child(data.getUid()).child(data.getUid());
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot snapshot1:snapshot.getChildren()){
-                    QuinsData data1=snapshot1.getValue(QuinsData.class);
-                    quinsDataList.add(data1);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        holder.circularStatusView.setPortionsCount(quinsDataList.size());
-
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, statusvieweractivity.class);
-                Common.put_key=data.getUid();
+                Intent intent = new Intent(context, statusvieweractivity.class);
+                Common.put_key = data.getUid();
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-             }
+
+                //Toast.makeText(context, ""+data.getUid(), Toast.LENGTH_SHORT).show();
+
+
+            }
         });
 
 

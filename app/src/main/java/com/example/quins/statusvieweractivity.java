@@ -1,6 +1,7 @@
 package com.example.quins;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,12 +35,19 @@ public class statusvieweractivity extends AppCompatActivity implements StoriesPr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statusviewer);
         quinsDataList = new ArrayList<QuinsData>();
-        inti();
+
+       new Handler().postDelayed(new Runnable() {
+           @Override
+           public void run() {
+               inti();
+
+           }
+       },1500);
+
+
 
         viewPager = findViewById(R.id.viewpager);
-      sliderAdapter=new SliderAdapter(statusvieweractivity.this,quinsDataList);
-
-        //Toast.makeText(this, ""+Common.put_key, Toast.LENGTH_SHORT).show();
+        sliderAdapter = new SliderAdapter(statusvieweractivity.this, quinsDataList);
 
 //        storiesProgressView = (StoriesProgressView) findViewById(R.id.stories);
 //        storiesProgressView.setStoriesCount(quinsDataList.size());
@@ -47,10 +55,7 @@ public class statusvieweractivity extends AppCompatActivity implements StoriesPr
 //        storiesProgressView.setStoriesListener(this);
 //        storiesProgressView.startStories();
 
-
-        for (int i = 0; i < quinsDataList.size(); i++) {
-            Toast.makeText(this, "" + quinsDataList.get(i), Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(statusvieweractivity.this, ""+quinsDataList.size(), Toast.LENGTH_SHORT).show();
 
 
     }
@@ -60,14 +65,15 @@ public class statusvieweractivity extends AppCompatActivity implements StoriesPr
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                quinsDataList.clear();
 
-                    if (Common.put_key.equals(dataSnapshot.child("url").getValue())) {
-                    QuinsData quinsData=dataSnapshot.getValue(QuinsData.class);
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    QuinsData quinsData = dataSnapshot.getValue(QuinsData.class);
                     quinsDataList.add(quinsData);
-                    }
 
                 }
+                sliderAdapter.notifyDataSetChanged();
 
             }
 
