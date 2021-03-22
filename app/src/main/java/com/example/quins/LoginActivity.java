@@ -10,31 +10,38 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.quins.Common.Common;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 7117;
-    FirebaseUser user;
+    FirebaseUser firebaseUser;
     List<AuthUI.IdpConfig> providers;
-
+DatabaseReference userfront;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
         showsigninOptions();
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        userfront = FirebaseDatabase.getInstance().getReference("QuinUser");
+
+        if (firebaseUser != null) {
             Intent intent = new Intent(this
                     , MainActivity.class);
-            Toast.makeText(this, "" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "" + firebaseUser.getDisplayName(), Toast.LENGTH_SHORT).show();
             startActivity(intent);
         }
 
@@ -56,7 +63,9 @@ public class LoginActivity extends AppCompatActivity {
 
             Intent intent = new Intent(this
                     , MainActivity.class);
-            Toast.makeText(this, "" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+
+
+
             startActivity(intent);
 
         }

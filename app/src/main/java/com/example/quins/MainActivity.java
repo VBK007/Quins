@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageViewi;
     RecyclerView recyclerView;
     List<QuinsData> quinsDataList;
-    String[] permission = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION};
+    String[] permission = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION};
     DatabaseReference databaseReference, userfront;
     Uri uri;
     FirebaseUser firebaseUser;
@@ -93,27 +93,25 @@ public class MainActivity extends AppCompatActivity {
         main = findViewById(R.id.main);
         quinsDataListd = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler);
-        searchuicom=findViewById(R.id.searchi);
-        searchView=findViewById(R.id.searchview);
+        searchuicom = findViewById(R.id.searchi);
+        searchView = findViewById(R.id.searchview);
         quinsDataList = new ArrayList<>();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
-       searchuicom.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               searchView.setVisibility(View.VISIBLE);
-               searchuicom.setVisibility(View.GONE);
-           }
-       });
-
+        searchuicom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.setVisibility(View.VISIBLE);
+                searchuicom.setVisibility(View.GONE);
+            }
+        });
 
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Quin");
 
-        userfront=FirebaseDatabase.getInstance().getReference("QuinUser");
-
+        userfront = FirebaseDatabase.getInstance().getReference("QuinUser");
 
 
         storageReference = FirebaseStorage.getInstance().getReference("QuinPicks").child("Image/");
@@ -124,6 +122,10 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
         handler();
+
+        if (firebaseUser!=null){
+            loaduser();
+        }
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,41 +200,69 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-searchView.addTextChangeListener(new TextWatcher() {
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        searchView.addTextChangeListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchuser(s.toString().toLowerCase());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+            }
+        });
+
+
+
+
 
     }
 
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-searchuser(s.toString().toLowerCase());
-    }
+    private void readPost() {
 
-    @Override
-    public void afterTextChanged(Editable s) {
+        userfront.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot datasnapshot) {
+                if (searchView.getText().equals("")){
+                    quinsDataList.clear();
+                    for (DataSnapshot snapshot:datasnapshot.getChildren()){
+                       QuinsData user=snapshot.getValue(QuinsData.class);
+                        quinsDataList.add(user);
+                    }
 
 
-    }
-});
+                    recyclerAdapter.notifyDataSetChanged();
+                    Collections.reverse(quinsDataList);
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
 
     }
 
     private void searchuser(String s) {
 
-        Query query= userfront.orderByChild("username")
+        Query query = userfront.orderByChild("username")
                 .startAt(s)
-                .endAt(s+"\uf8ff");
+                .endAt(s + "\uf8ff");
 
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot datasnapshot) {
                 quinsDataList.clear();
-                for (DataSnapshot snapshot:datasnapshot.getChildren()){
-                   QuinsData user=snapshot.getValue(QuinsData.class);
+                for (DataSnapshot snapshot : datasnapshot.getChildren()) {
+                    QuinsData user = snapshot.getValue(QuinsData.class);
                     quinsDataList.add(user);
                 }
                 recyclerAdapter.notifyDataSetChanged();
@@ -262,8 +292,6 @@ searchuser(s.toString().toLowerCase());
         userfront.child(firebaseUser.getUid()).setValue(hashMap);
 
     }
-
-
 
 
     private void handler() {
@@ -363,12 +391,6 @@ searchuser(s.toString().toLowerCase());
 
             }
         });
-
-
-
-
-
-
 
 
     }

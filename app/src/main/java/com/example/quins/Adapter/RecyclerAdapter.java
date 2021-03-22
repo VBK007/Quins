@@ -33,7 +33,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public List<QuinsData> quinsData;
     public List<Integer> quinsDataList;
     public DatabaseReference reference;
-    int size=0;
+    long size=0;
 
     public RecyclerAdapter() {
     }
@@ -71,8 +71,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot:snapshot.getChildren()){
-                    holder.circularStatusView.setPortionsCount(toIntit(dataSnapshot.getChildrenCount()));
-
+                   size=dataSnapshot.getChildrenCount();
                 }
 
             }
@@ -82,6 +81,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
             }
         });
+
+
+        holder.circularStatusView.setPortionsCount((int) size);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
