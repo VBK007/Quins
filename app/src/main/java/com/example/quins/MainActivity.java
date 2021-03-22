@@ -18,6 +18,8 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.quins.Adapter.RecyclerAdapter;
@@ -41,10 +44,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.security.Permission;
 import java.util.ArrayList;
@@ -67,12 +72,14 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageViewi;
     RecyclerView recyclerView;
     List<QuinsData> quinsDataList;
-    String[] permission = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    String[] permission = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION};
     DatabaseReference databaseReference, userfront;
     Uri uri;
     FirebaseUser firebaseUser;
     List<QuinsData> quinsDataListd;
     StorageReference storageReference;
+    MaterialSearchBar searchView;
+    ImageView searchuicom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +93,22 @@ public class MainActivity extends AppCompatActivity {
         main = findViewById(R.id.main);
         quinsDataListd = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler);
+        searchuicom=findViewById(R.id.searchi);
+        searchView=findViewById(R.id.searchview);
         quinsDataList = new ArrayList<>();
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+       searchuicom.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               searchView.setVisibility(View.VISIBLE);
+               searchuicom.setVisibility(View.GONE);
+           }
+       });
+
+
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Quin");
 
@@ -98,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference("QuinPicks").child("Image/");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
         recyclerAdapter = new RecyclerAdapter(this, quinsDataList);
 
         progressBar.setVisibility(View.VISIBLE);
@@ -176,6 +198,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+searchView.addTextChangeListener(new TextWatcher() {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+searchuser(s.toString().toLowerCase());
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+
+    }
+});
+
+
+
+    }
+
+    private void searchuser(String s) {
+
+        Query query= userfront.orderByChild("username")
+                .startAt(s)
+                .endAt(s+"\uf8ff");
+
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot datasnapshot) {
+                quinsDataList.clear();
+                for (DataSnapshot snapshot:datasnapshot.getChildren()){
+                   QuinsData user=snapshot.getValue(QuinsData.class);
+                    quinsDataList.add(user);
+                }
+                recyclerAdapter.notifyDataSetChanged();
+                Collections.reverse(quinsDataList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
@@ -266,6 +334,8 @@ public class MainActivity extends AppCompatActivity {
         intit();
         recyclerView.setVisibility(View.VISIBLE);
         recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
 
 
     }

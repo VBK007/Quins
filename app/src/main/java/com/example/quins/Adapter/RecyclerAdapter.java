@@ -31,7 +31,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     public Context context;
     public List<QuinsData> quinsData;
-    public List<QuinsData> quinsDataList;
+    public List<Integer> quinsDataList;
     public DatabaseReference reference;
     int size=0;
 
@@ -65,6 +65,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         }
 
+        reference=FirebaseDatabase.getInstance().getReference("Quins").child(data.getUid());
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot:snapshot.getChildren()){
+                    holder.circularStatusView.setPortionsCount(toIntit(dataSnapshot.getChildrenCount()));
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +103,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             holder.textView.setText(data.getUsername());
         }
 
+
+    }
+
+    private int toIntit(long childrenCount) {
+
+        return (int) childrenCount;
 
     }
 
