@@ -1,35 +1,38 @@
 package com.example.quins.RecyclerModel;
 
 public class QuinsData {
-    private String Url;
-    private String Username;
+    private String url;
+    private String username;
     private String uid;
     private String photoimageurl;
+    private String desc;
 
     public QuinsData() {
     }
 
-    public QuinsData(String url, String username, String uid, String photoimageurl) {
-        Url = url;
-        Username = username;
+    public QuinsData(String url, String username, String uid, String photoimageurl, String desc) {
+        this.url = url;
+        this.username = username;
         this.uid = uid;
         this.photoimageurl = photoimageurl;
+        this.desc = desc;
     }
 
+
     public String getUrl() {
-        return Url;
+        return url;
     }
 
     public void setUrl(String url) {
-        Url = url;
+        this.url = url;
     }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public void setUsername(String username) {
-        Username = username;
+        this.username = username;
     }
 
     public String getUid() {
@@ -46,5 +49,13 @@ public class QuinsData {
 
     public void setPhotoimageurl(String photoimageurl) {
         this.photoimageurl = photoimageurl;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

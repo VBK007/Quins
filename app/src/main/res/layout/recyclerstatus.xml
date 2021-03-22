@@ -27,7 +27,7 @@
             app:portion_color="@color/colorAccent"
             app:portion_spacing="4dp"
             app:portion_width="4dp"
-            app:portions_count="8" />
+            app:portions_count="1" />
 
 
         <TextView
@@ -38,6 +38,7 @@
             android:textSize="22sp"
             android:fontFamily="@font/arbutus"
             android:layout_margin="10dp"
+            android:textColor="#fec2"
             android:text="Username"
             />
 

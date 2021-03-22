@@ -31,12 +31,12 @@ public class LoginActivity extends AppCompatActivity {
         providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
         showsigninOptions();
         user = FirebaseAuth.getInstance().getCurrentUser();
-if (user!=null){
-    Intent intent = new Intent(this
-            , MainActivity.class);
-    Toast.makeText(this, "" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-    startActivity(intent);
-}
+        if (user != null) {
+            Intent intent = new Intent(this
+                    , MainActivity.class);
+            Toast.makeText(this, "" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }
 
     }
 
@@ -52,10 +52,10 @@ if (user!=null){
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MY_REQUEST_CODE) {
-            if (requestCode == RESULT_OK) {
-                Toast.makeText(this, "Login Sucesfull", Toast.LENGTH_SHORT).show();
-            }
+        if (requestCode == MY_REQUEST_CODE && resultCode == RESULT_OK) {
+
+            Toast.makeText(this, "Login Sucesfull", Toast.LENGTH_SHORT).show();
+
         }
 
 
